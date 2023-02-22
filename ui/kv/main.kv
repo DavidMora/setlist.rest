@@ -1,0 +1,100 @@
+#:kivy 1.0.9
+
+#:import random random.random
+#:import hex kivy.utils.get_color_from_hex
+
+<MainScreen>:
+    BoxLayout:
+        id: main_boxlayout
+        padding: 50
+        orientation: "vertical"
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: 0.2
+            spacing: 100
+            
+            Image:
+                source: 'images/logo.png'
+                # Giving the size of image
+                size_hint_x: 0.25    
+    
+                # allow stretching of image
+                allow_stretch: True
+                    
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'center'
+                canvas.before:
+                    Color:
+                        rgb: hex('#C0C0C0')
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                Image:
+                    source: 'images/techbackground.png'
+                    allow_stretch: True
+                    size_hint: None, None
+                    size: self.parent.width, self.parent.height
+                    keep_ratio: False
+                BoxLayout:
+                    orientation: "vertical"
+                    Label:
+                        text: "Now playing: Cometa"
+                    Label:
+                        text: "Up next: En tu sitio"
+
+            Image:
+                source: 'images/codebranch.png'
+                # Giving the size of image
+                size_hint_x: 0.25    
+    
+                # allow stretching of image
+                allow_stretch: True
+            
+        BoxLayout:
+            id: lists_boxlayout
+            orientation: "horizontal"
+            spacing: 25
+            MDScrollView:
+                SongListView:
+                    id: songlist
+            BoxLayout:
+                orientation: "vertical"
+                spacing: 50
+                padding: 0, 50
+                size_hint_x: 0.35
+                Widget:
+
+                MDFloatingActionButton:
+                    icon: "arrow-right"
+                MDFloatingActionButton:
+                    icon: "arrow-left"
+                Widget:
+
+            MDScrollView:
+                SetlistView:
+                    id: setlist
+
+            BoxLayout:
+                orientation: "vertical"
+                spacing: 20
+                padding: 0, 30
+                size_hint_x: 0.35
+                MDFloatingActionButton:
+                    icon: "arrow-up"
+                MDFloatingActionButton:
+                    icon: "arrow-down"
+                MDFloatingActionButton:
+                    icon: "play"
+                MDFloatingActionButton:
+                    icon: "stop"
+                MDFloatingActionButton:
+                    icon: "skip-forward"
+                MDFloatingActionButton:
+                    icon: "skip-backward"
+
+        MDRoundFlatIconButton:
+            text: 'Previous screen'
+            size_hint: None, None
+            size: 150, 50
+            on_release: root.manager.current = root.manager.previous()
