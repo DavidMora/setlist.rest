@@ -1,2 +1,2 @@
 [run]
-omit = *tests*,icons.py,venv/**
+omit = *tests*,icons.py,venv/**,*.kv

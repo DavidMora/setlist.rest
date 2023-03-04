@@ -42,22 +42,21 @@ class ReaControl:
         async with aiohttp.ClientSession() as session:
             reaper = self._reaper(session, self.host, self.port, self.username, self.password)
             await reaper.toggleMetronome()
-    async def play(self, marker: str) -> None:
+    async def play(self) -> None:
         self._raise_if_not_initialized()
-        await self.goto_marker(marker)
         async with aiohttp.ClientSession() as session:
             reaper = self._reaper(session, self.host, self.port, self.username, self.password)
-            await reaper.sendCommand("PLAY")
+            await reaper.play()
     async def stop(self) -> None:
         self._raise_if_not_initialized()
         async with aiohttp.ClientSession() as session:
             reaper = self._reaper(session, self.host, self.port, self.username, self.password)
-            await reaper.sendCommand("STOP")
+            await reaper.stop()
     async def goto_marker(self, marker: str) -> None:
         self._raise_if_not_initialized()
         async with aiohttp.ClientSession() as session:
             reaper = self._reaper(session, self.host, self.port, self.username, self.password)
-            await reaper.sendCommand("SET/POS_STR/%s" % marker)
+            await reaper.sendCommand("SET/POS_STR/m%s" % marker)
     def _raise_if_not_initialized(self) -> None:
         if not self.initialized:
             raise Exception("ReaControl not initialized")

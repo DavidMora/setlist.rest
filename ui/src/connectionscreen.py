@@ -8,5 +8,18 @@ class Content(BoxLayout):
     pass
 
 class ConnectionScreen(Screen):
-    pass
+    def __init__(self, **kwargs):
+        super(Screen, self).__init__(**kwargs)
+        self.ids.hostname.text = 'localhost'
+        self.ids.port.text = '8080'
+        self.ids.username.text = ''
+        self.ids.password.text = ''
+    def set_connection_data(self):
+        self.manager.get_screen('MainScreen').set_connection_data(
+            self.ids.hostname.text,
+            self.ids.port.text,
+            self.ids.username.text,
+            self.ids.password.text
+        )
+        self.manager.current = 'MainScreen'
 

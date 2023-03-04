@@ -67,8 +67,10 @@
 
                 MDFloatingActionButton:
                     icon: "arrow-right"
+                    on_release: root.arrow_right()
                 MDFloatingActionButton:
                     icon: "arrow-left"
+                    on_release: root.arrow_left()
                 Widget:
 
             MDScrollView:
@@ -82,19 +84,25 @@
                 size_hint_x: 0.35
                 MDFloatingActionButton:
                     icon: "arrow-up"
+                    on_release: root.arrow_up()
                 MDFloatingActionButton:
                     icon: "arrow-down"
+                    on_release: root.arrow_down()
                 MDFloatingActionButton:
                     icon: "play"
+                    on_release: root.play()
                 MDFloatingActionButton:
                     icon: "stop"
+                    on_release: root.stop()
                 MDFloatingActionButton:
                     icon: "skip-forward"
+                    on_release: root.skip_forward()
                 MDFloatingActionButton:
                     icon: "skip-backward"
+                    on_release: root.skip_backward()
 
-        MDRoundFlatIconButton:
-            text: 'Previous screen'
+        MDFlatButton:
+            text: 'Connection settings'
             size_hint: None, None
-            size: 150, 50
-            on_release: root.manager.current = root.manager.previous()
+            size: 300, 1
+            on_release: root.manager.current = 'ConnectionScreen'

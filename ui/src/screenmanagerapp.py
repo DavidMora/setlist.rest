@@ -14,10 +14,12 @@ class ScreenManagerApp(MDApp):
         # self.theme_cls.colors = colors
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "Gray"
+        self.title = 'Setlists by CodeBranch'
         root = ScreenManager()
-        root.add_widget(MainScreen(name='MainScreen', modules=self.modules))
         root.add_widget(ConnectionScreen(name='ConnectionScreen'))
+        root.add_widget(MainScreen(name='MainScreen', modules=self.modules))
         return root
+
     
 
 

@@ -1,3 +1,4 @@
+import modules.helpers.constants
 def extractAndRemoveModules(kwargs: dict) -> dict:
     """
     This function is used to process the modules passed to the app.
@@ -17,3 +18,4 @@ def validateModuleCompleteness(self: object) -> None:
         raise Exception('No Songs module provided')
     if 'setlist' not in self.modules or self.modules['setlist'] is None: 
         raise Exception('No Setlist module provided')
+    

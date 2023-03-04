@@ -44,5 +44,3 @@ class Test(unittest.TestCase):
     def test_screenManagerRaisesWhenNoSetlist(self):
         with self.assertRaises(Exception):
             app = ScreenManagerApp(modules={'daw':ReaControl(), 'songs':Songs()})
-if __name__ == '__main__':
-    unittest.main()
