@@ -1,5 +1,5 @@
 from kivymd.uix.selection.selection import MDSelectionList
-from kivymd.uix.list import (OneLineIconListItem, IconLeftWidget)
+from kivymd.uix.list import (OneLineAvatarIconListItem, IconLeftWidget, IconRightWidget)
 from modules.helpers.constants import marker_prefix_for_setlist
 from kivy.animation import Animation
 
@@ -13,9 +13,9 @@ class SetlistView(MDSelectionList):
         self.clear_widgets()
         for song in items:
             self.add_widget(
-                OneLineIconListItem(
+                OneLineAvatarIconListItem(
                     IconLeftWidget(icon='music'),
-                    None,
+                    IconRightWidget(icon=song.playing) if song.playing else None,
                     text=song.title,
                     id=f"{marker_prefix_for_setlist}{song.id}-{song.position}"
                 )    

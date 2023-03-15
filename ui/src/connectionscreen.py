@@ -1,8 +1,10 @@
 from kivy.uix.screenmanager import Screen
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
+import pathlib
+current_path = pathlib.Path(__file__).parent.parent.resolve()
 
-Builder.load_file('ui/kv/connectionscreen.kv')
+Builder.load_file(f'{current_path}/kv/connectionscreen.kv')
 
 class Content(BoxLayout):
     pass

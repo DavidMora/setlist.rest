@@ -39,9 +39,11 @@
                 BoxLayout:
                     orientation: "vertical"
                     Label:
-                        text: "Now playing: Cometa"
+                        id: now_playing_label
+                        text: root.play_state_string
                     Label:
-                        text: "Up next: En tu sitio"
+                        id: metronome_label
+                        text: root.metronome_string
 
             Image:
                 source: 'images/codebranch.png'
@@ -100,6 +102,9 @@
                 MDFloatingActionButton:
                     icon: "skip-backward"
                     on_release: root.skip_backward()
+                MDFloatingActionButton:
+                    icon: "metronome"
+                    on_release: root.toggle_metronome()
 
         MDFlatButton:
             text: 'Connection settings'

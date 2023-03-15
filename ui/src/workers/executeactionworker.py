@@ -29,9 +29,7 @@ class ExecuteActionWorker(EventDispatcher):
 
     async def _execute_action(self) -> None:
         """Run the asyncio event loop once."""
-        print('executing actions')
         for index, action in enumerate(self.actions):
-            print(action)
             try:
                 await action(*self.action_args[index])
                 await asyncio.sleep(0.5)

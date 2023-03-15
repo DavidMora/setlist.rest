@@ -5,3 +5,4 @@ class Song:
         self.title = title
         self.position = position
         self.custom_id = 0
+        self.playing = None

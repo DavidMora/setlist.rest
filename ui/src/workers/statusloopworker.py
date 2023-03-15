@@ -47,9 +47,8 @@ class StatusLoopWorker(EventDispatcher):
         while not self._stop_event.is_set():
             if self.daw:
                 try:
-                    status = await self.daw.get_status()
+                    [status, markers] = self.daw.get_status()
                     self.dispatch('on_status', status)
-                    markers = await self.daw.get_markers()
                     self.dispatch('on_markers', markers)
                 except Exception as e:
                     self.dispatch('on_error', e)
@@ -61,5 +60,4 @@ class StatusLoopWorker(EventDispatcher):
         pass
     def on_error(self, error, *args) -> None:
         logging.debug('unable to conncet to daw: ', error)
-        self.stop()
     

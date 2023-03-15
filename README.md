@@ -21,6 +21,9 @@
 
 # Execute
 
+# Let reaper know about reapy
+python -c "import reapy; reapy.configure_reaper()"
+
  # How to run ui tests
 
  (venv) python tests/ui/src/test_screenmanagerapp.py
