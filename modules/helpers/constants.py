@@ -1,4 +1,7 @@
 import os
+
+# APP SETTINGS
+
 marker_prefix_for_songlist = 'song-marker-'
 marker_prefix_for_setlist = 'setlist-marker-'
 play_state_stop = 'stopped'
@@ -10,6 +13,16 @@ setlist_file_path = os.path.join(hidden_folder_path, setlist_file_name)
 if not os.path.exists(hidden_folder_path):
     os.mkdir(hidden_folder_path)
 
+# MIDI SETTINGS
+
+midi_device_name = b'Akai LPD8 Wireless'
+midi_event_play = 40
+midi_event_stop = 41
+midi_event_toggle_metronome = 43
+midi_event_skip_forward = 37
+midi_event_skip_backward = 36
+
+# PLAYSATE CONSTANTS
 
 PLAYSTATE_STOPPED = "stopped"
 PLAYSTATE_PLAYING = "playing"

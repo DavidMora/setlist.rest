@@ -1,21 +1,21 @@
 import urllib.request
 from collections import ChainMap
 import modules.helpers.constants as constants
-
+from typing import List, Dict
 
 class ReaControl:
     def __init__(self) -> None:
-        self.initialized = False
-        self.counter = 0
-        self.base_url = ''
+        self.initialized: bool = False
+        self.counter: int = 0
+        self.base_url: str = ''
     def set_connection_data(self, *positional, host: str, port: int, username: str='', password: str='') -> None:
         self.initialized = True
         self.host = host
         self.port = port
         self.username = username
         self.password = password
-        auth = f'{self.username}:{self.password}@' if self.username != '' and self.password != '' else ''
-        self.base_url = f'http://{auth}{self.host}:{self.port}/_/'
+        auth: str = f'{self.username}:{self.password}@' if self.username != '' and self.password != '' else ''
+        self.base_url: str = f'http://{auth}{self.host}:{self.port}/_/'
     def get_status(self) -> list:
         self._raise_if_not_initialized()
         response = self.send_command('NTRACK;TRANSPORT;BEATPOS;GET/40364;GET/1157;TRACK;')
@@ -24,11 +24,11 @@ class ReaControl:
         self.counter += 1
         markers = self.parse_markers(response)
         return [status, markers]
-    def parse_markers(self, response) -> list:
-        response = response.split('\n')
-        markers = []
-        for arrayMarker in response:
-            marker = arrayMarker.split('\t')
+    def parse_markers(self, response: str) -> list:
+        split_response: list = response.split('\n')
+        markers: list = []
+        for arrayMarker in split_response:
+            marker: list = arrayMarker.split('\t')
             if len(marker) != 0 and marker[0] == 'MARKER' and marker[1] != '!1016':
                 markers.append(marker[1:])
         return markers
@@ -51,7 +51,7 @@ class ReaControl:
         return urllib.request.urlopen(self.base_url + command).read().decode('utf-8')
     def trackFlags(self,field: int):
         """Process track flags"""
-        flags = []
+        flags: List = []
         if field & 1:
             flags.append(constants.FLAG_FOLDER)
 
@@ -82,13 +82,12 @@ class ReaControl:
         return flags
     def parse(self, payload: str) -> dict:
         """Parse Reaper DAW payload"""
-        tracks = {"tracks": []}
+        tracks: Dict = {"tracks": []}
 
-        def processLine(line: str):
+        def processLine(line: str) -> str:
             """Process line"""
-            token = line.strip().split("\t")
-            name = token[0]
-
+            token: List[str] = line.strip().split("\t")
+            name: str = token[0]
             if(name == "NTRACK"):
                 return {"number_of_tracks": int(token[1])}
             elif(name == "TRANSPORT"):
@@ -136,12 +135,12 @@ class ReaControl:
                 })
                 return tracks
 
-        array = payload.split("\n")
-        lines = [element for element in array if element]
-        processedLines = map(processLine, lines)
-        parsed = list(processedLines)
-        result = [element for element in parsed if element]
-        dictionary = dict(ChainMap(*result))
+        array: List[str] = payload.split("\n")
+        lines: List[str] = [element for element in array if element]
+        processedLines: List[Dict[str, str]] = map(processLine, lines)
+        parsed: List[Dict[str, str]] = list(processedLines)
+        result: List[Dict[str, str]] = [element for element in parsed if element]
+        dictionary: Dict[str, str] = dict(ChainMap(*result))
 
         tracks = dictionary.get("tracks")
 
@@ -149,7 +148,7 @@ class ReaControl:
         armedTracks = [
             track["name"]
             for track in tracks if constants.FLAG_RECORD_ARMED in track["flags"]
-        ]
+        ] if tracks else []
         dictionary["armed_tracks"] = armedTracks
 
         # get number of armed tracks

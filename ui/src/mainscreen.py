@@ -7,9 +7,11 @@ from ui.src.songlistview import SongListView # we need this import to make sure 
 from ui.src.setlistview import SetlistView # we need this import to make sure the setlistview is loaded from kv
 from modules.helpers.modules import extractAndRemoveModules, validateModuleCompleteness
 from ui.src.workers.statusloopworker import StatusLoopWorker
+from ui.src.workers.midicontrollerworker import MidiControllerWorker
 from ui.src.workers.executeactionworker import ExecuteActionWorker
 import modules.helpers.constants as constants
 from modules.songs.song import Song
+from modules.midicontroller.midicontroller import MidiController
 import copy
 import pathlib
 current_path = pathlib.Path(__file__).parent.parent.resolve()
@@ -31,6 +33,10 @@ class MainScreen(Screen):
         validateModuleCompleteness(self)
         self.event_loop_worker = None
         self.connection_error = False
+        self.midi_controller = None
+        self.event_midi_loop_worker = None
+        self.force_update_setlist_icon = None
+
         self.status = {
             'metronome': None,
             'play_state': None
@@ -38,7 +44,7 @@ class MainScreen(Screen):
         self.previous_state = None
     def on_enter(self, *args) -> None:
         self.manager.get_screen('MainScreen').ids.songlist.songs = self.modules['songs']
-        Clock.schedule_interval(lambda dt: self.periodic_processor(), 1)
+        Clock.schedule_interval(lambda dt: self.periodic_processor(), 0.3)
         def repaint(dt):
             if (self.connection_error == True):
                 toast('Connection to DAW failed')
@@ -46,6 +52,7 @@ class MainScreen(Screen):
                 self.manager.current = 'ConnectionScreen'
             self.manager.get_screen('MainScreen').ids.songlist.populate()
         self.event = Clock.schedule_interval(repaint, 0.5)
+        self.on_midi_start()
         self.populate_setlist()
     def on_pre_leave(self, *args):
         self.event.cancel()
@@ -85,6 +92,28 @@ class MainScreen(Screen):
         self.modules['songs'].set_songs(markers)
     def on_error(self, instance: StatusLoopWorker, error: Exception) -> None:
         self.connection_error = True
+    def on_midi_start(self):
+        self.midi_controller = MidiController()
+        self.midi_controller.restart()
+        self.init_midi_polling_loop()
+    def init_midi_polling_loop(self):
+        if self.event_midi_loop_worker is not None:
+            return
+        self.event_midi_loop_worker = worker =  MidiControllerWorker(self.midi_controller)
+        worker.bind(on_midi_event=self.on_midi_event)
+        worker.start()
+    def on_midi_event(self, instance: MidiControllerWorker, event: dict) -> None:
+        if event == constants.midi_event_stop:
+            self.stop()
+        elif event == constants.midi_event_play:
+            self.play()
+        elif event == constants.midi_event_toggle_metronome:
+            self.toggle_metronome()
+        elif event == constants.midi_event_skip_forward:
+            self.skip_forward()
+        elif event == constants.midi_event_skip_backward:
+            self.skip_backward()
+        self.force_update_setlist_icon = 'stop' if event == constants.midi_event_stop else 'play'
     def arrow_right(self):
         markers = self.manager.get_screen('MainScreen').ids.songlist.arrow_right()
         for id in markers:
@@ -115,7 +144,6 @@ class MainScreen(Screen):
         self.modules['setlist'].save_setlist()
     def play(self):
         marker = self.modules['setlist'].next()
-        self.populate_setlist()
         self.goto_marker_and_play(marker)
     def goto_marker_and_play(self, marker):
         self.modules['daw'].goto_marker(marker)
@@ -126,11 +154,9 @@ class MainScreen(Screen):
         self.modules['daw'].toggle_metronome()
     def skip_backward(self):
         marker = self.modules['setlist'].prev()
-        self.populate_setlist()
         self.goto_marker_and_play(marker)
     def skip_forward(self):
         self.play()
-        self.populate_setlist()
     def populate_setlist(self, icon_for_current_song: str='play'):
         setlist_songs = []
         currently_playing_id = self.modules['setlist'].get_currently_playing()
@@ -153,6 +179,10 @@ class MainScreen(Screen):
     def periodic_processor(self):
         self.process_metronome()
         self.process_play_state()
+        if self.force_update_setlist_icon:
+            self.populate_setlist(self.force_update_setlist_icon)
+            self.force_update_setlist_icon = None
+
     def update_now_playing_label(self, song_title: str=''):
         self.play_state_string = f'Now playing: {song_title}'
     def update_metronome_label(self, metronome_text: str=''):

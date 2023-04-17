@@ -1,4 +1,3 @@
-import modules.helpers.constants
 def extractAndRemoveModules(kwargs: dict) -> dict:
     """
     This function is used to process the modules passed to the app.

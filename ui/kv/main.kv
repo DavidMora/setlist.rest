@@ -106,8 +106,17 @@
                     icon: "metronome"
                     on_release: root.toggle_metronome()
 
-        MDFlatButton:
-            text: 'Connection settings'
-            size_hint: None, None
-            size: 300, 1
-            on_release: root.manager.current = 'ConnectionScreen'
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: 0.05
+            MDFlatButton:
+                text: 'Connection settings'
+                size_hint: None, None
+                size: 300, 1
+                on_release: root.manager.current = 'ConnectionScreen'
+            Widget:
+            MDFlatButton:
+                text: 'Midi connect'
+                size_hint: None, None
+                size: 300, 1
+                on_release: root.on_midi_start()
